@@ -12,6 +12,7 @@ class GameViewModel : ViewModel() {
 
     init {
         secretWordDisplay = deriveSecretWordDisplay()
+        println("secretWordDisplay is ${secretWordDisplay}. ")
     }
 
     fun deriveSecretWordDisplay() : String {

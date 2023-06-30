@@ -1,0 +1,69 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.example.buildconfig'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.example.buildconfig"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // defining the build date
+        buildConfigField "long", "BUILD_DATE", System.currentTimeMillis() + "L"
+        // defining the build id
+        buildConfigField "String", "BUILD_NUMBER", "\"${System.env.BUILD_BUILDNUMBER}\""
+        // define whether this build is a production build
+        buildConfigField "boolean", "IS_PRODUCTION", "false"
+        // test for identify flavor setting
+        buildConfigField "String", "flavorTAG", "\"debug\""
+    }
+
+    // flavors
+    flavorDimensions += "status"
+    productFlavors {
+        product {
+            dimension = "status"
+            //buildConfigField "String", "flavorTAG", "\"tag-prod\""
+        }
+        stage {
+            dimension = "status"
+            //buildConfigField "String", "flavorTAG", "\"tag-stage\""
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}

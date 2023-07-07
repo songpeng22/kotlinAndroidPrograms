@@ -94,5 +94,20 @@ class KotlinThread : Thread() {
 //        }catch (e: Exception){
 //            e.printStackTrace()
 //        }
+
+        /*
+         * test 06
+         * File -> InputStream
+         * */
+        //File(fileName).inputStream()
+        val file6 = createTempFile()
+        File(file6.toString()).inputStream()
+        //openFileOutput
+//        try {
+//            fileOutputStream = getApplicationContext().openFileOutput(file, Context.MODE_PRIVATE)
+//            fileOutputStream.write(text5.toByteArray())
+//        }catch (e: Exception){
+//            e.printStackTrace()
+//        }
     }
 }

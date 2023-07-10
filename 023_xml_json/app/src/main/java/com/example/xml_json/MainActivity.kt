@@ -1,10 +1,13 @@
 package com.example.xml_json
 
-import android.R.xml
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.ctc.wstx.stax.WstxInputFactory
+import com.ctc.wstx.stax.WstxOutputFactory
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.xml.XmlFactory
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import org.xml.JSONObject
 import org.xml.XML
 
@@ -38,9 +41,19 @@ class MainActivity : AppCompatActivity() {
          * Jackson
          * */
         val mapper = ObjectMapper()
-        val actualObj:JsonNode = mapper.readTree(jsonText)
+        var actualObj:JsonNode = mapper.readTree(jsonText)
         println("actualObj:Name:${actualObj.get("Name")}")
         println("actualObj:Active:${actualObj.get("Active")}")
+
+        val xml:String = ("<?xml version='1.0'?><Name>Robert</Name><Active>true</Active>")
+        val xmlFactory = XmlFactory.builder()
+            .xmlInputFactory(WstxInputFactory())
+            .xmlOutputFactory(WstxOutputFactory())
+            .build()
+        val xmlMapper:XmlMapper = XmlMapper.builder(xmlFactory).build()
+        var actualXmlObj = xmlMapper.readTree(xml)
+        println("actualObj:Name:${actualXmlObj.get("Name")}")       //result is null
+        println("actualObj:Active:${actualXmlObj.get("Active")}")   //result is null
 
     }
 }

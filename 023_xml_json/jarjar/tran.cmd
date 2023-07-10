@@ -1,0 +1,1 @@
+java -jar jarjar-1.3.jar process rule.txt json-20230618.jar jsonRefactor-20230618.jar

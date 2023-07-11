@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
 
         /*
          * org.json
+         * json object normal creation
          * */
         val jsonObject:JSONObject = JSONObject()
         jsonObject.put("Name", "Robert")
@@ -38,22 +39,51 @@ class MainActivity : AppCompatActivity() {
         println(jsonText)
 
         /*
+        * org.json
+        * create json object from string
+        * */
+        val jsonObject2:JSONObject = JSONObject(jsonText)
+        println("jsonObject2:Name:${jsonObject2.get("Name")}")
+        println("jsonObject2:Active:${jsonObject2.get("Active")}")
+
+        /*
          * Jackson
          * */
+        //read json to tree
         val mapper = ObjectMapper()
-        var actualObj:JsonNode = mapper.readTree(jsonText)
-        println("actualObj:Name:${actualObj.get("Name")}")
-        println("actualObj:Active:${actualObj.get("Active")}")
+        var actualJsonObj:JsonNode = mapper.readTree(jsonText)
+        println("actualObj:Name:${actualJsonObj.get("Name")}")
+        println("actualObj:Active:${actualJsonObj.get("Active")}")
 
-        val xml:String = ("<?xml version='1.0'?><Name>Robert</Name><Active>true</Active>")
+        //read xml to tree: failed, no error, but result of getName is null
+        //implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3'
+        //success at
+//        implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
+//        implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+//        implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
+//        implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2'
+//        implementation 'com.fasterxml.woodstox:woodstox-core:6.5.0'
+//        implementation 'javax.xml.stream:stax-api:1.0-2'
+        val xml:String = ("<?xml version='1.0'?><Root><Name>Robert</Name><Active>true</Active></Root>")
         val xmlFactory = XmlFactory.builder()
             .xmlInputFactory(WstxInputFactory())
             .xmlOutputFactory(WstxOutputFactory())
             .build()
         val xmlMapper:XmlMapper = XmlMapper.builder(xmlFactory).build()
         var actualXmlObj = xmlMapper.readTree(xml)
-        println("actualObj:Name:${actualXmlObj.get("Name")}")       //result is null
-        println("actualObj:Active:${actualXmlObj.get("Active")}")   //result is null
+        println("actualXmlObj:Name:${actualXmlObj.get("Name")}")
+        println("actualXmlObj:Active:${actualXmlObj.get("Active")}")   //result is null
 
+        //read xml to tree
+        //java.lang.NoSuchMethodError: No static method newFactory(Ljava/lang/String;Ljava/lang/ClassLoader;)
+        // Ljavax/xml/stream/XMLInputFactory; in class Ljavax/xml/stream/XMLInputFactory;
+        // or its super classes (declaration of 'javax.xml.stream.XMLInputFactory'
+        //fix may be here: https://stackoverflow.com/questions/31360025/using-jackson-dataformat-xml-on-android
+        //but will not touch the fix for now
+//        val xml2:String = ("<?xml version='1.0'?><Root><Name>Robert</Name><Active>true</Active></Root>")
+//        val xmlMapper2:XmlMapper = XmlMapper()
+//        var actualXmlObj2 = xmlMapper2.readTree(xml2)
+//        println("actualXmlObj2:Name:${actualXmlObj2.get("Name")}")
+//        println("actualXmlObj2:Active:${actualXmlObj2.get("Active")}")
     }
 }

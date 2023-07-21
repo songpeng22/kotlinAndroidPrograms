@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
                     println("label.fields.size:${label.fields.size}")
                     var field = label.fields.get(0)
                     println("label.field.id:${field.id}")
+                    println("label.field.type:${field.type}")
                 }
             }
         }

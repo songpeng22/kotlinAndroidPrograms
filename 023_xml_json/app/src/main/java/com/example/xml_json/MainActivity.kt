@@ -7,6 +7,7 @@ import com.ctc.wstx.stax.WstxOutputFactory
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.JsonNodeType
 import com.fasterxml.jackson.dataformat.xml.XmlFactory
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import org.w3c.dom.Document
@@ -164,7 +165,10 @@ class MainActivity : AppCompatActivity() {
         subNode = actualXmlObj2.at(xmlBranchPath)
         println("Jackson:subNode:${xmlBranchPath}:${subNode},isObject:${subNode.isObject},isArray:${subNode.isArray},isValueNode:${subNode.isValueNode}")
         subNode.forEachIndexed  { index, node -> println("index:${index},node:${node},isObject:${node.isObject},isArray:${node.isArray},isValueNode:${node.isValueNode}") }
-
+        //check fake node
+        xmlBranchPath = "/LAYOUT/NOTHING"
+        var nodeOfNothing = actualXmlObj2.at(xmlBranchPath)
+        println("nodeOfNothing.nodeType:${nodeOfNothing.nodeType}")
 
         //read xml to tree
         //java.lang.NoSuchMethodError: No static method newFactory(Ljava/lang/String;Ljava/lang/ClassLoader;)

@@ -5,6 +5,14 @@ import android.os.Bundle
 import android.os.SystemClock
 import com.hfad.stopwatch.databinding.ActivityMainBinding
 
+/*
+ * what this project do:
+ * use View binding redo stopwatch
+ * logic:
+ * start watch -> stop -> reset
+ * new technics:
+ * use view binding instead of findViewById() stuff
+ * */
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     var running = false  //Is the stopwatch running?

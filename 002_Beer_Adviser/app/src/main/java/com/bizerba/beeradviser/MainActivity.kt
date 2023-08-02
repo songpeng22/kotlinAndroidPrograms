@@ -7,6 +7,15 @@ import android.widget.Spinner
 import android.widget.TextClock
 import android.widget.TextView
 
+/*
+ * what this project do:
+ * build an simple interactive app
+ * logic:
+ * select beer type from spinner -> click button -> get beer from beer list of listOf -> show string on Text
+ * new technics:
+ * listOf
+ * assign string directly to TextView by 'brands.text = beers'
+ * */
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

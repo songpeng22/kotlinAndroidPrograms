@@ -6,6 +6,14 @@ import android.os.SystemClock
 import android.widget.Button
 import android.widget.Chronometer
 
+/*
+ * what this project do:
+ * watch
+ * logic:
+ * start watch -> stop -> reset
+ * new technics:
+ * Chronometer
+ * */
 class MainActivity : AppCompatActivity() {
 
     lateinit var stopwatch: Chronometer  //The stopwatch

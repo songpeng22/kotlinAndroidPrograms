@@ -14,6 +14,14 @@ import androidx.navigation.ui.NavigationUI
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.appbar.MaterialToolbar
 
+/*
+ * what this project do:
+ * navigation drawer
+ * logic:
+ *
+ * new technics:
+ *
+ * */
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

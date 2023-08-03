@@ -21,6 +21,16 @@ import androidx.compose.material.TextField
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 
+/*
+ * what this project do:
+ * Compose instruction
+ * logic:
+ *
+ * new technics:
+ *
+ * new technic points:
+ *
+ * */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

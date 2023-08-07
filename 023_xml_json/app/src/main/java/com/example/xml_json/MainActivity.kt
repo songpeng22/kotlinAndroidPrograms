@@ -1,15 +1,21 @@
 package com.example.xml_json
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.ctc.wstx.stax.WstxInputFactory
 import com.ctc.wstx.stax.WstxOutputFactory
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.JsonNodeType
 import com.fasterxml.jackson.dataformat.xml.XmlFactory
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
@@ -43,9 +49,6 @@ object  Unpack {
             }
         }
     }
-
-
-
 }
 
 class MainActivity : AppCompatActivity() {
@@ -286,6 +289,17 @@ class MainActivity : AppCompatActivity() {
         var listStr = listOf<String>("/Layout","/Field")
         Unpack.unpackNested(listStr,actualXmlObj4,0)
         println("xml4 end.")
+
+        //jackson serialization/deserialization
+        val json = Json.encodeToString(ResultSuccess())
+        Log.e("serialization", json)
+        val json2 = Json.encodeToString(ResultFailure())
+        Log.e("serialization", json2)
+        var obj = Json.decodeFromString<ResultSuccess>(json)
+        Log.e("serialization", obj.msg)
+        var obj2 = Json.decodeFromString<ResultFailure>(json2)
+        Log.e("serialization", obj2.msg)
+
 
         /*
          * Dom parser

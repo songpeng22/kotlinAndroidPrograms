@@ -1,13 +1,13 @@
 package com.bizerba.thread
 
-import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
 import android.util.Log
+import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
-import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,91 +15,53 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //thread function
+        println("\nthread function:")
         thread(start = true){
+            println("thread function: ->-> run thread function.")
             Thread.sleep(100)
-            println("Thread ->-> run thread function.")
 
             Handler(Looper.getMainLooper()).post {
                 Log.v("thread", "PackService::onServiceConnected()::thread(),Thread is ->-> ${Thread.currentThread()}...............................")
             }
         }
 
-        //new thread
-        val thread = Thread {
-            println("Thread ->-> ${Thread.currentThread()} has run.")
-        }
-        thread.start()
-
-        //override thread
-        class SimpleThread: Thread() {
-            public override fun run() {
-                println("Thread ->-> override thread has run.")
-            }
-        }
-        val threadSimple = SimpleThread()
-        threadSimple.start()
-
-        //new runnable thread
-        class SimpleRunnable: Runnable {
-            public override fun run() {
-                println("Thread ->-> runnable thread has run.")
-            }
-        }
-        val threadWithRunnable = Thread(SimpleRunnable())
-        threadWithRunnable.start()
-
-        //Coroutine - runBlocking
-        //because we have used Dispatchers.Default which launches it in the GlobalScope.
-        runBlocking {
-            val job = launch(Dispatchers.Default) {
-                println("Coroutine ->-> ${Thread.currentThread()} has run.")
-            }
-            //
-            launch { // context of the parent, main runBlocking coroutine
-                println("main runBlocking      : I'm working in thread ${Thread.currentThread().name}")
-                delay(1000)
-                println("main runBlocking: After delay in thread ${Thread.currentThread().name}")
-            }
-            launch(Dispatchers.Unconfined) { // not confined -- will work with main thread
-                println("Unconfined            : I'm working in thread ${Thread.currentThread().name}")
-                delay(500)
-                //resume on another thread
-                println("Unconfined      : After delay in thread ${Thread.currentThread().name}")
-            }
-            launch(Dispatchers.Default) { // will get dispatched to DefaultDispatcher
-                println("Default               : I'm working in thread ${Thread.currentThread().name}")
-            }
-            launch(newSingleThreadContext("MyOwnThread")) { // will get its own new thread
-                println("newSingleThreadContext: I'm working in thread ${Thread.currentThread().name}")
-            }
-        }
-        //Dispatcher
-        GlobalScope.launch(Dispatchers.Main) {
-            println("GlobalScope.launch::Dispatchers.Main::I'm working in thread ${Thread.currentThread().name}")
+        //threads
+        thread(start = true){
+            ThreadContainer().run()
         }
 
-        //Coroutine - GlobalScope
-        val job = GlobalScope.launch { 	// creates a new coroutine and continues
-            println("Coroutine ->-> GlobalScope has run.")
+        //handler communicate from thread
+        println("\nthread communicate from thread:")
+        thread(start = true){
+            val handlerContainer = HandlerContainer()
+            handlerContainer.setHandler(messageHandler)
+            handlerContainer.run()
         }
 
-        //Instead of launching coroutines in the GlobalScope, just like we usually do with threads (threads are always global),
-        // we can launch coroutines in the specific scope of the operation we are performing
-        runBlocking {
-            val job = launch {
-                println("${Thread.currentThread()} has run.")
-            }
+        //thread pools
+        thread(start = true){
+            ThreadPoolContainer().run()
         }
 
-        //async
-        CoroutineScope(Dispatchers.Default).async {
-            return@async "async ->-> ${Thread.currentThread()} has run."
+        //coroutines
+        thread(start = true){
+            CoroutineContainer().run()
         }
+    }
 
-        val deferred = GlobalScope.async(Dispatchers.Unconfined, CoroutineStart.LAZY) {
-            println("async ->-> ${Thread.currentThread()} has run.")
+    //Handler -> WeakReference to the outer class
+    private val weakReferenceOfOuterClass = WeakReference<MainActivity>(this)
+    class MessageHandler(private val outerClass: WeakReference<MainActivity>) : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            Log.v("MainActivity","msg:${msg.what},obj:${msg.obj}")
+            outerClass.get()?.mainActivityString = "main activity string..."
+            outerClass.get()?.StringArrived()
         }
+    }
+    private val messageHandler = MessageHandler(weakReferenceOfOuterClass)
 
-
+    var mainActivityString:String = "main activity string"
+    fun StringArrived(){
+        Log.v("MainActivity","string arrived.")
     }
 }

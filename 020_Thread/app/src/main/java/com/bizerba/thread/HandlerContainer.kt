@@ -10,8 +10,11 @@ class HandlerContainer {
         handlerOuter = handler
     }
     fun run(){
+        //Handler communication from thread to thread
         Thread.sleep(1000)
-
         handlerOuter?.obtainMessage(MESSAGE_NEW_LABEL_ARRIVED, "xml path")?.sendToTarget()
+
+
+
     }
 }

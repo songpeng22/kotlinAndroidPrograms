@@ -10,6 +10,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.*
 
 class CoroutineContainer {
     private val TAG:String = "CoroutineContainer"
@@ -61,14 +64,50 @@ class CoroutineContainer {
             }
         }
 
-        //async
+        //async - deferred object builder
         Log.v(TAG,"\nCoroutineScope async:")
-        CoroutineScope(Dispatchers.Default).async {
-            return@async "async ->-> ${Thread.currentThread()} has run."
+        val deferredCoroutineScope = CoroutineScope(Dispatchers.Default).async {
+            return@async "CoroutineScope::async ->-> ${Thread.currentThread()} has run."
+        }
+        CoroutineScope(Dispatchers.Default).launch {
+            Log.v(TAG,"CoroutineScope(Dispatchers.Default).launch()::I'm working in thread ${Thread.currentThread().name}")
+            deferredCoroutineScope.await()
+            Log.v(TAG,"GlobalScope.launch::Dispatchers.Main::")
+            withContext(Dispatchers.Main){
+                Log.v(TAG,"withContext(Dispatchers.Main)::I'm working in thread ${Thread.currentThread().name}")
+            }
         }
 
         val deferred = GlobalScope.async(Dispatchers.Unconfined, CoroutineStart.LAZY) {
-            Log.v(TAG,"async ->-> ${Thread.currentThread()} has run.")
+            Log.v(TAG,"GlobalScope::async ->-> ${Thread.currentThread()} has run.")
+            return@async "any result"
         }
+        Log.v(TAG,"async - GlobalScope.async.")
+        GlobalScope.launch {
+            val deferredResult = deferred.await()
+            println("deferredResult:${deferredResult}")
+        }
+
+
+        //Channel
+        runBlocking<Unit> {
+            val channel = Channel<String>()
+            launch {
+                channel.send("A1")
+                channel.send("A2")
+                println("A done")
+            }
+            launch {
+                channel.send("B1")
+                println("B done")
+            }
+            launch {
+                repeat(3) {
+                    val x = channel.receive()
+                    println(x)
+                }
+            }
+        }
+
     }
 }

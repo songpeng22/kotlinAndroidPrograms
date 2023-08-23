@@ -55,8 +55,7 @@ class MainActivity : AppCompatActivity() {
             handlerContainer.setHandler(messageHandler)
             handlerContainer.run()
         }
-*/
-/*
+
         //HandlerThread
         //The main advantage of using HandlerThread over a regular Thread is that it simplifies the process of communicating between threads.
         println("\nHandlerThread:")
@@ -121,12 +120,12 @@ class MainActivity : AppCompatActivity() {
         thread(start = true){
             ThreadPoolContainer().run()
         }
-
+*/
         //coroutines
         thread(start = true){
             CoroutineContainer().run()
         }
-*/
+/*
         //coroutines
         println("\nMyCoroutineCope:")
         thread(start = true){
@@ -138,6 +137,6 @@ class MainActivity : AppCompatActivity() {
             //class extends CoroutineScope
             MyCoroutineScopeEx()
         }
-
+*/
     }
 }

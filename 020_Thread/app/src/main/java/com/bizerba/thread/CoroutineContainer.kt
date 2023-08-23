@@ -93,21 +93,28 @@ class CoroutineContainer {
         runBlocking<Unit> {
             val channel = Channel<String>()
             launch {
+                println("A1 sending...")
                 channel.send("A1")
+                println("A1 sent")
+                delay(2000)
                 channel.send("A2")
+                println("A2 sent")
                 println("A done")
             }
             launch {
+                println("B1 sending...")
                 channel.send("B1")
+                println("B1 sent")
                 println("B done")
             }
             launch {
                 repeat(3) {
+                    delay(2000)
+                    println("receiving...")
                     val x = channel.receive()
-                    println(x)
+                    println("${x} received")
                 }
             }
         }
-
     }
 }

@@ -122,6 +122,8 @@ class MainActivity : AppCompatActivity() {
         }
 */
         //coroutines
+        println("\ncoroutines:")
+        System.setProperty("kotlinx.coroutines.debug", "on" )
         thread(start = true){
             CoroutineContainer().run()
         }

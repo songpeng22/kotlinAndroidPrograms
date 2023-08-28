@@ -17,6 +17,13 @@ import kotlinx.coroutines.*
 class CoroutineContainer {
     private val TAG:String = "CoroutineContainer"
     fun run(){
+        //Coroutine name
+        System.setProperty("kotlinx.coroutines.debug", "on" )
+        var jobOf = CoroutineScope(Dispatchers.IO).launch(CoroutineName("coroutine_01")){
+
+        }
+        println("jobOf.name:${jobOf.toString()},jobOf.isAlive:${jobOf.isActive}")
+
         //Coroutine - runBlocking
         //because we have used Dispatchers.Default which launches it in the GlobalScope.
         Log.v(TAG,"\nrunBlocking launch:")

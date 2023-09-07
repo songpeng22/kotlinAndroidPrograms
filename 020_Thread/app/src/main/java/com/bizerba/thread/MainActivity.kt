@@ -8,8 +8,25 @@ import android.os.Message
 import android.os.Messenger
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.ContinuationInterceptor
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -120,25 +137,90 @@ class MainActivity : AppCompatActivity() {
         thread(start = true){
             ThreadPoolContainer().run()
         }
-*/
+
         //coroutines
         println("\ncoroutines:")
         System.setProperty("kotlinx.coroutines.debug", "on" )
         thread(start = true){
             CoroutineContainer().run()
         }
-/*
+*/
+/**/
         //coroutines
         println("\nMyCoroutineCope:")
-        thread(start = true){
-            Log.v(TAG,"thread()::I'm working in thread ${Thread.currentThread().name}")
-            //interface extends CoroutineScope
-            DataManager().apply {
-                Log.v(TAG,"DataManager run.")
-            }
+        var supervisorJob = SupervisorJob()
+        //val contextOf = CoroutineName("DataManager")
+        val exceptionHandler = CoroutineExceptionHandler{ context, error ->
+            Log.v(TAG, "${context[CoroutineName]}:CoroutineExceptionHandler:${error.message}")
+        }
+        val scopeOf:CoroutineScope = CoroutineScope(Dispatchers.IO + supervisorJob + exceptionHandler)
+//        Log.v(TAG, "dispatcher is ${scopeOf.coroutineContext[ContinuationInterceptor] as CoroutineDispatcher}")
+        //scopeOf.ensureActive()
+        var dataScope = DataScope(supervisorJob)
+        var dataManager = DataManager()
+        var childJobOfDataScope = dataScope.launch(CoroutineName("DataManager")) {
+//            try {
+                Log.v(TAG, "${coroutineContext[CoroutineName]} dispatched by ${coroutineContext[ContinuationInterceptor] as CoroutineDispatcher} is running...")
+
+                dataScope.apply {
+                    Log.v(TAG,"DataManager apply:${name}.")
+                    name = "DataManagerEx"
+                    Log.v(TAG,"DataManager apply:${name}.")
+                }.apply {
+                    Log.v(TAG,"DataManager apply..")
+                }
+                dataScope.runOnce()
+                Log.v(TAG,"+dataScope.isActive:${dataScope.isActive}...")
+                while(dataScope.isActive){
+                    dataScope.run()
+                    dataManager.getData()
+                }
+                Log.v(TAG,"-dataScope.isActive:${dataScope.isActive}...")
+
+                throw error("launch1")
+//            }
+//            catch (ex:CancellationException){
+//                Log.v(TAG,"CancellationException caught:${ex.message}")
+//            }
+//            catch (ex:Exception){
+//                Log.v(TAG,"Exception caught:${ex.message}")
+//            }
+
+        }
+        childJobOfDataScope.invokeOnCompletion {
+            Log.v(TAG, "jobOf ${(childJobOfDataScope as CoroutineScope).coroutineContext[CoroutineName].toString()} is completed.")
+        }
+        //
+        var jobOfParent = scopeOf.launch(CoroutineName("Parent")) {
+            Log.v(TAG, "${coroutineContext[CoroutineName]} is running...")
+            throw error("launch2")
+        }
+        jobOfParent.cancel()
+        jobOfParent.invokeOnCompletion {
+            Log.v(TAG, "jobOf ${(jobOfParent as CoroutineScope).coroutineContext[CoroutineName].toString()} is completed.")
+        }
+        //
+        var jobOfMyCoroutineScopeEx = scopeOf.launch(CoroutineName("MyCoroutineScopeEx")) {
             //class extends CoroutineScope
             MyCoroutineScopeEx()
+            throw error("launch3")
         }
-*/
+        jobOfMyCoroutineScopeEx.cancel()
+        //iterate
+        for (child in supervisorJob.children){
+            println("child is ${(child as CoroutineScope).coroutineContext[CoroutineName].toString() }")
+        }
+        //cancel
+        runBlocking {
+            launch {
+                delay(10)
+                Log.v(TAG,"+jobOfDataManager is cancelling...")
+                childJobOfDataScope.cancel()
+                Log.v(TAG,"-jobOfDataManager is cancelling...")
+            }
+        }
+        childJobOfDataScope.invokeOnCompletion {
+            Log.v(TAG,"jobOfDataManager completed.")
+        }
     }
 }

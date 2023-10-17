@@ -137,15 +137,15 @@ class MainActivity : AppCompatActivity() {
         thread(start = true){
             ThreadPoolContainer().run()
         }
-
+*/
         //coroutines
         println("\ncoroutines:")
         System.setProperty("kotlinx.coroutines.debug", "on" )
         thread(start = true){
             CoroutineContainer().run()
         }
-*/
-/**/
+
+/*
         //coroutines
         println("\nMyCoroutineCope:")
         var supervisorJob = SupervisorJob()
@@ -222,5 +222,6 @@ class MainActivity : AppCompatActivity() {
         childJobOfDataScope.invokeOnCompletion {
             Log.v(TAG,"jobOfDataManager completed.")
         }
+*/
     }
 }

@@ -17,6 +17,7 @@ import kotlinx.coroutines.*
 class CoroutineContainer {
     private val TAG:String = "CoroutineContainer"
     fun run(){
+/*
         //Coroutine name
         System.setProperty("kotlinx.coroutines.debug", "on" )
         var jobOf = CoroutineScope(Dispatchers.IO).launch(CoroutineName("coroutine_01")){
@@ -70,7 +71,7 @@ class CoroutineContainer {
                 Log.v(TAG,"${Thread.currentThread()} has run.")
             }
         }
-
+*/
         //async - deferred object builder
         Log.v(TAG,"\nCoroutineScope async:")
         val deferredCoroutineScope = CoroutineScope(Dispatchers.Default).async {
@@ -95,7 +96,16 @@ class CoroutineContainer {
             println("deferredResult:${deferredResult}")
         }
 
+        //awaitAll
+//        val deferredResults = listOf(
+//            async { fetchAsyncData("Server A") },
+//            async { fetchAsyncData("Server B") },
+//            async { fetchAsyncData("Server C") }
+//        )
+//        // Now, wait for the completion of all the async computations using awaitAll
+//        val results = awaitAll(*deferredResults.toTypedArray())
 
+/*
         //Channel
         runBlocking<Unit> {
             val channel = Channel<String>()
@@ -123,5 +133,6 @@ class CoroutineContainer {
                 }
             }
         }
+*/
     }
 }
